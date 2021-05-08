@@ -1,0 +1,59 @@
+!! Colorscheme
+
+! special
+*.foreground: #EBDBB2
+*.background: #282828
+*.cursorColor: #EBDBB2
+*.highlightColor: #3C3836
+*.highlightTextColor: #928374
+
+! black
+*.color0: #1D2021
+*.color8: #504945
+
+! red
+*.color1: #CC241D
+*.color9: #FB4934
+
+! green
+*.color2: #98971A
+*.color10: #B8BB26
+
+! yellow
+*.color3: #D79921
+*.color11: #FABD2F
+
+! blue
+*.color4: #458588
+*.color12: #83A598
+
+! magenta
+*.color5: #A347BA
+*.color13: #C061CB
+
+! cyan
+*.color6: #689D6A
+*.color14: #8EC07C
+
+! white
+*.color7: #A89984
+*.color15: #EBDBB2
+
+!! URxvt Appearance
+urxvt*depth: 32
+urxvt*background: [90]#282828
+URxvt.scrollBar: false
+URxvt.scrollBar_right: false
+URxvt.font: xft:JetBrains Mono:style=Regular:size=11
+URxvt.boldFont: xft:JetBrains Mono:style=Bold:size=11
+URxvt.italicFont: xft:JetBrains Mono:style=Italic:size=11
+URxvt.boldItalicFont: xft:JetBrains Mono:style=Bold Italic:size=11
+URxvt.internalBorder: 6
+URxvt.cursorBlink: true
+URxvt.depth: 32
+URxvt.iso14755: false
+URxvt.iso14755_52: false
+
+!! Copy Paste
+URxvt.keysym.C-S-c: eval:selection_to_cliboard
+URxvt.keysym.C-S-v: eval:paste_clipboard
