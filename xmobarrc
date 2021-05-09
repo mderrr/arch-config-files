@@ -1,18 +1,16 @@
 Config { 
 
    -- appearance
-     font =         "xft:JetBrains Mono:style=Bold:size=10:antialias=true"
-   , additionalFonts = [ "xft:mononoki Nerd Font Mono:size=13:antialias=true:hinting=true" ]
+     font =         "xft:JetBrains Mono:style=Bold:size=11:antialias=true"
+   , additionalFonts = [ "xft:mononoki Nerd Font Mono:pixelsize=19:antialias=true:hinting=true" ]
    , bgColor =      "#1D2021"
    , fgColor =      "#EBDBB2"
    , position =     Top
-   , border =       BottomB
-   , borderColor =  "#000000"
 
    -- layout
    , sepChar =  "%"   -- delineator between plugin names and straight text
    , alignSep = "}{"  -- separator between left-right alignment
-   , template = " <fn=1></fn> <fc=#32302f>|</fc> %UnsafeStdinReader% }{ <fc=#83a598>| <fn=1></fn> %uname%</fc> <fc=#fabd2f>| %coretemp% %cpu%</fc> <fc=#fe8019>| %memory%</fc> <fc=#fb4934>| <fn=1></fn> %pacman-updates% %aur-updates%</fc> <fc=#b8bb26>| %dynnetwork%</fc> <fc=#d3869b>| %date%</fc> | %kbd% "
+   , template = " <fn=1></fn> <fc=#32302f>|</fc> %UnsafeStdinReader% }{ <fc=#83a598>| <fn=1></fn> %uname%</fc> <fc=#8ec07c>| %multicpu%</fc> <fc=#fabd2f>| %multicoretemp%</fc> <fc=#fe8019>| %memory%</fc> <fc=#fb4934>| <fn=1></fn> %pacman-updates% %aur-updates%</fc> <fc=#b8bb26>| %dynnetwork%</fc> <fc=#d3869b>| %time%</fc> | %kbd% "
 
    -- general behavior
    , lowerOnStart =     True    -- send to bottom of window stack on start
@@ -22,9 +20,6 @@ Config {
    , pickBroadest =     False   -- choose widest display (multi-monitor)
    , persistent =       True    -- enable/disable hiding (True = disabled)
 
-   -- Icons
-   , iconRoot = "/home/santiago/.xmonad/xpm/" -- default "."
-
    -- plugins
    , commands = 
 
@@ -33,35 +28,44 @@ Config {
                              ] 10
                     
         -- cpu
-        , Run Cpu            [ "-t"         , "(<total>%)"
-                             , "--High"     , "5"         -- units: %
-                             , "--high"     , "red"
-                             ] 10
+        , Run MultiCpu       [ "--template" , "<fn=1>\xf108</fn> cpu: (<total>%)"
+                             , "--Low"      , "10"         -- units: %
+                             , "--High"     , "60"         -- units: %
+                             , "--low"      , "#729963"
+                             , "--high"     , "#A2CC93"
+                             ] 50
 
         -- cpu core temperature monitor
-        , Run CoreTemp       [ "--template" , "<fn=1>\xf108</fn> cpu: <core1>°C"
-                             , "--High"     , "60"        -- units: °C
-                             , "--high"     , "darkred"
+        , Run MultiCoreTemp  [ "--template" , "<fn=1>\xf8c7</fn> temp: (<avg>°)"
+                             , "--Low"      , "30"
+                             , "--High"     , "70"
+                             , "--low"      , "#C89726"
+                             , "--high"     , "#FBCA58"
+                             , "--"
+                                   , "--mintemp", "25"
+                                   , "--maxtemp", "100"
                              ] 50
                           
         -- memory usage monitor
-        , Run Memory         [ "--template" ,"<fn=1>\xf233</fn> mem: (<usedratio>%)"
-                             , "--High"     , "70"        -- units: %
-                             , "--high"     , "darkred"
-                             ] 10
+        , Run Memory         [ "--template" , "<fn=1>\xf233</fn> mem: (<usedratio>%)"
+                             , "--Low"      , "10"         -- units: %
+                             , "--High"     , "50"         -- units: %
+                             , "--low"      , "#CC6714"
+                             , "--high"     , "#FF9A47"
+                             ] 50
 
         -- time and date indicator 
-        , Run Date           "<fn=1>\xf133</fn> %b %d (%H:%M)" "date" 10
+        , Run DateZone       "<fn=1>\xf133</fn> %a, %d %b (%I:%M)" "es_CO.UTF-8" "America/Bogota" "time" 10
 
         -- keyboard layout indicator
         , Run Kbd            [ ("us(dvorak)" , "<fc=#00008B>DV</fc>")
                              , ("us"         , "<fc=#8B0000>US</fc>")
+                             , ("latam"      , "<fn=1>\xf80b</fn> latam")
                              ]
         
-
 	      -- Custom Scripts
-	      , Run Com "/home/santiago/Scripts/queryUpdates/pacman-updates.sh" [] "pacman-updates" 36000
-	      , Run Com "/home/santiago/Scripts/taur.sh" ["-Nu"] "aur-updates" 36000
+	      , Run Com "/home/santiago/.scripts/pacman-updates.sh" [] "pacman-updates" 36000
+	      , Run Com "/home/santiago/.scripts/taur.sh" ["-Nu"] "aur-updates" 36000
 	      , Run Com "uname" ["-r"] "" 0
 
         -- Unsafe Stdin Reader
