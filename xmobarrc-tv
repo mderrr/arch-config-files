@@ -1,0 +1,42 @@
+Config { 
+
+   -- appearance
+     font =         "xft:JetBrains Mono:style=Bold:size=11:antialias=true"
+   , additionalFonts = [ "xft:mononoki Nerd Font Mono:pixelsize=19:antialias=true:hinting=true" ]
+   , bgColor =      "#1D2021"
+   , fgColor =      "#EBDBB2"
+   , position =     Top
+
+   -- layout
+   , sepChar =  "%"   -- delineator between plugin names and straight text
+   , alignSep = "}{"  -- separator between left-right alignment
+   , template = " <fn=1></fn> <fc=#32302f>|</fc> %UnsafeStdinReader% }{ <fc=#fb4934>| <fn=1></fn> %pacman-updates% %aur-updates%</fc> <fc=#d3869b>| %time%</fc> | %kbd% "
+
+   -- general behavior
+   , lowerOnStart =     True    -- send to bottom of window stack on start
+   , hideOnStart =      False   -- start with window unmapped (hidden)
+   , allDesktops =      False    -- show on all desktops
+   , overrideRedirect = True    -- set the Override Redirect flag (Xlib)
+   , pickBroadest =     False   -- choose widest display (multi-monitor)
+   , persistent =       True    -- enable/disable hiding (True = disabled)
+
+   -- plugins
+   , commands = 
+
+        -- time and date indicator 
+        [ Run DateZone       "<fn=1>\xf133</fn> %a, %d %b (%I:%M)" "es_CO.UTF-8" "America/Bogota" "time" 10
+
+        -- keyboard layout indicator
+        , Run Kbd            [ ("us(dvorak)" , "<fc=#00008B>DV</fc>")
+                             , ("us"         , "<fc=#8B0000>US</fc>")
+                             , ("latam"      , "<fn=1>\xf80b</fn> latam")
+                             ]
+        
+	      -- Custom Scripts
+	      , Run Com "/home/santiago/.scripts/pacman-updates.sh" [] "pacman-updates" 36000
+	      , Run Com "/home/santiago/.scripts/taur.sh" ["-Nu"] "aur-updates" 36000
+
+        -- Unsafe Stdin Reader
+        , Run UnsafeStdinReader
+	      ]
+   }

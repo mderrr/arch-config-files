@@ -93,9 +93,18 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 
 myStartupHook :: X ()
 myStartupHook = do
-	spawnOnce "urxvt -q -o -f &" -- urxvt daemon for better performance  
-	spawnOnce "nitrogen --restore &"
-        spawnOnce "picom -f --config /home/santiago/.config/picom/picom.conf &"
+    spawnOnce "urxvt -q -o -f &" -- urxvt daemon for better performance  
+    spawnOnce "nitrogen --restore &"
+    spawnOnce "picom -f --config /home/santiago/.config/picom/picom.conf &"
+    
+    -- Workspace layout on the monitors
+    screenWorkspace 0 >>= flip whenJust (windows . W.view) -- Focus the first screen.
+    windows $ W.greedyView "main" -- Force the first screen to "main"
+
+    screenWorkspace 1 >>= flip whenJust (windows . W.view) -- Focus the second screen.
+    windows $ W.greedyView "tv" -- Force the second screen to "tv"
+    
+    screenWorkspace 0 >>= flip whenJust (windows . W.view) -- Focus the main screen again.
 
 --Makes setting the spacingRaw simpler to write. The spacingRaw module adds a configurable amount of space around windows.
 mySpacing :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
@@ -205,7 +214,7 @@ myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ T.toggleLayouts float
                                  ||| tallAccordion
                                  ||| wideAccordion
 
-myWorkspaces = ["main", "dev", "www", "gfx", "5", "6", "7", "8", "9"]
+myWorkspaces = ["tv", "docs", "main", "dev", "www", "gfx", "7", "8", "9"]
 
 myManageHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
 myManageHook = composeAll
@@ -224,50 +233,52 @@ myManageHook = composeAll
      , className =? "splash"          --> doFloat
      , className =? "toolbar"         --> doFloat
      , className =? "Pavucontrol"     --> doFloat
-     , title =? "Visual Studio Code"  --> doShift ( myWorkspaces !! 1 )
-     , title =? "Mozilla Firefox"     --> doShift ( myWorkspaces !! 2 )
-     , className =? "Gimp"            --> doShift ( myWorkspaces !! 3 )
+     , title =? "Visual Studio Code"  --> doShift ( myWorkspaces !! 3 )
+     , title =? "Mozilla Firefox"     --> doShift ( myWorkspaces !! 4 )
+     , className =? "Gimp"            --> doShift ( myWorkspaces !! 5 )
      , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat  -- Float Firefox Dialog
      , isFullscreen -->  doFullFloat
      ] 
 
 -- Key Bindings
 myKeys = 
-	-- Launch terminal
-	[ ((myModMask, xK_Return), spawn myTerminal)
-	
-	-- Launch dmenu
-	, ((myModMask, xK_d), spawn "dmenu_run")
+    -- Launch terminal
+    [ ((myModMask, xK_Return), spawn myTerminal)
+    
+    -- Launch dmenu
+    , ((myModMask, xK_d), spawn "dmenu_run")
 
-	-- Launch browser
-	, ((myModMask, xK_b), spawn "firefox")
+    -- Launch browser
+    , ((myModMask, xK_b), spawn "firefox")
 
-	-- Lauch vs-code
-	, ((myModMask, xK_c), spawn "code")
+    -- Lauch vs-code
+    , ((myModMask, xK_c), spawn "code")
 
-	-- Close focused window
-	, ((myModMask .|. shiftMask, xK_q), kill)
+    -- Close focused window
+    , ((myModMask .|. shiftMask, xK_q), kill)
 
-	-- Quit xmonad
-	, ((myModMask .|. shiftMask, xK_c), io (exitWith ExitSuccess))
+    -- Quit xmonad
+    , ((myModMask .|. shiftMask, xK_c), io (exitWith ExitSuccess))
 
-   	 -- Volume control
-    	, ((myModMask, 0xffbf), spawn "amixer -q sset Master 2%-")
-    	, ((myModMask, 0xffc0), spawn "amixer -q sset Master 2%+")
-    	, ((myModMask, 0xffc1), spawn "amixer set Master toggle")
+    -- Volume control
+    , ((myModMask, 0xffbf), spawn "amixer -q sset Master 2%-")
+    , ((myModMask, 0xffc0), spawn "amixer -q sset Master 2%+")
+    , ((myModMask, 0xffc1), spawn "amixer set Master toggle")
 
-	-- Pulse audio volume control
-	, ((myModMask, xK_v), spawn "pavucontrol")
-
-    -- Brightness control
-    , ((myModMask, 0x1008ff02), spawn "lux -a 10%")
-    , ((myModMask, 0x1008ff03), spawn "lux -s 10%")
-	]  
-
-
+    -- Pulse audio volume control
+    , ((myModMask, xK_v), spawn "pavucontrol")
+    ]
+    ++
+    [((m .|. myModMask, k), windows $ f i) -- To replace greedyView with regular view
+         | (i, k) <- zip myWorkspaces [xK_1 .. xK_9]
+         , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
+     
 main :: IO ()
 main = do
-    xmproc <- spawnPipe "xmobar -x 0 /home/santiago/.config/xmobar/xmobarrc"
+    xmproc <- spawnPipe "xmobar -x 0 $HOME/.config/xmobar/xmobarrc"
+    xmproctv <- spawnPipe "xmobar -x 1 $HOME/.config/xmobar/xmobarrc-tv"
+    xmprocportrait <- spawnPipe "xmobar -x 2 $HOME/.config/xmobar/xmobarrc-portrait"
+
     -- the xmonad, ya know...what the WM is named after!
     xmonad $ ewmh def
         { manageHook         = myManageHook <+> manageDocks
@@ -286,14 +297,14 @@ main = do
         , normalBorderColor  = myNormalBorderColor
         , focusedBorderColor = myFocusedBorderColor
         , logHook = workspaceHistoryHook <+> dynamicLogWithPP xmobarPP
-			{ ppOutput = \x -> hPutStrLn xmproc x >> hPutStrLn xmproc x >> hPutStrLn xmproc x
-			, ppCurrent = xmobarColor "#98971a" "" . wrap "[" "]" -- current workspace
-			, ppVisible = xmobarColor "#b8bb26" ""                -- visible but not current workspace
-			, ppHidden = xmobarColor "#bdae93" ""                 -- hidden workspaces
-			, ppHiddenNoWindows = xmobarColor "#504945" ""        -- hidden workspaces (no windows)
-			, ppTitle = xmobarColor "#b3afc2" "" . shorten 10     -- title of active window
-			, ppSep = "<fc=#32302f> <fn=1>|</fn> </fc>"           -- separators
-			, ppUrgent = xmobarColor "#c45500" "" . wrap "!" "!"  -- urgent workspace
-			, ppOrder = \(ws:l:t:ex) -> [ws]++ex -- extra [ws,l]++ex++[t]
-			}
+            { ppOutput = \x -> hPutStrLn xmproc x >> hPutStrLn xmproctv x >> hPutStrLn xmprocportrait x
+            , ppCurrent = xmobarColor "#98971a" "" . wrap "[" "]" -- current workspace
+            , ppVisible = xmobarColor "#b8bb26" ""                -- visible but not current workspace
+            , ppHidden = xmobarColor "#bdae93" ""                 -- hidden workspaces
+            , ppHiddenNoWindows = xmobarColor "#504945" ""        -- hidden workspaces (no windows)
+            , ppTitle = xmobarColor "#b3afc2" "" . shorten 10     -- title of active window
+            , ppSep = "<fc=#32302f> <fn=1>|</fn> </fc>"           -- separators
+            , ppUrgent = xmobarColor "#c45500" "" . wrap "!" "!"  -- urgent workspace
+            , ppOrder = \(ws:l:t:ex) -> ws : ex -- extra [ws,l]++ex++[t]
+            }
         } `additionalKeys` myKeys
