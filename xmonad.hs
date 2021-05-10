@@ -255,6 +255,9 @@ myKeys =
     -- Lauch vs-code
     , ((myModMask, xK_c), spawn "code")
 
+    -- Launch nemo
+    , ((myModMask, xK_f), spawn "nemo")
+
     -- Close focused window
     , ((myModMask .|. shiftMask, xK_q), kill)
 
