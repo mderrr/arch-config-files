@@ -233,6 +233,7 @@ myManageHook = composeAll
      , className =? "splash"          --> doFloat
      , className =? "toolbar"         --> doFloat
      , className =? "Pavucontrol"     --> doFloat
+     , className =? "nemo"            --> doFloat
      , title =? "Visual Studio Code"  --> doShift ( myWorkspaces !! 1 )
      , title =? "Mozilla Firefox"     --> doShift ( myWorkspaces !! 2 )
      , className =? "Gimp"            --> doShift ( myWorkspaces !! 3 )
