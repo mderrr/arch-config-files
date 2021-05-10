@@ -101,8 +101,8 @@ myStartupHook = do
     screenWorkspace 2 >>= flip whenJust (windows . W.view) -- Focus the second screen.
     windows $ W.greedyView "tv" -- Force the second screen to "tv"
 
-    screenWorkspace 0 >>= flip whenJust (windows . W.view) -- Focus the first screen.
-    windows $ W.greedyView "main" -- Force the first screen to "main"
+    screenWorkspace 1 >>= flip whenJust (windows . W.view) -- Focus the first screen.
+    windows $ W.greedyView "docs" -- Force the first screen to "main"
     
     screenWorkspace 0 >>= flip whenJust (windows . W.view) -- Focus the main screen again.
 
@@ -214,7 +214,7 @@ myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ T.toggleLayouts float
                                  ||| tallAccordion
                                  ||| wideAccordion
 
-myWorkspaces = ["tv", "docs", "main", "dev", "www", "gfx", "7", "8", "9"]
+myWorkspaces = ["main", "dev", "www", "gfx", "5", "6", "7", "8", "docs", "tv"]
 
 myManageHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
 myManageHook = composeAll
@@ -233,9 +233,9 @@ myManageHook = composeAll
      , className =? "splash"          --> doFloat
      , className =? "toolbar"         --> doFloat
      , className =? "Pavucontrol"     --> doFloat
-     , title =? "Visual Studio Code"  --> doShift ( myWorkspaces !! 3 )
-     , title =? "Mozilla Firefox"     --> doShift ( myWorkspaces !! 4 )
-     , className =? "Gimp"            --> doShift ( myWorkspaces !! 5 )
+     , title =? "Visual Studio Code"  --> doShift ( myWorkspaces !! 1 )
+     , title =? "Mozilla Firefox"     --> doShift ( myWorkspaces !! 2 )
+     , className =? "Gimp"            --> doShift ( myWorkspaces !! 3 )
      , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat  -- Float Firefox Dialog
      , isFullscreen -->  doFullFloat
      ] 
