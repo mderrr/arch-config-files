@@ -98,11 +98,11 @@ myStartupHook = do
     spawnOnce "picom -f --config /home/santiago/.config/picom/picom.conf &"
     
     -- Workspace layout on the monitors
+    screenWorkspace 2 >>= flip whenJust (windows . W.view) -- Focus the second screen.
+    windows $ W.greedyView "tv" -- Force the second screen to "tv"
+
     screenWorkspace 0 >>= flip whenJust (windows . W.view) -- Focus the first screen.
     windows $ W.greedyView "main" -- Force the first screen to "main"
-
-    screenWorkspace 1 >>= flip whenJust (windows . W.view) -- Focus the second screen.
-    windows $ W.greedyView "tv" -- Force the second screen to "tv"
     
     screenWorkspace 0 >>= flip whenJust (windows . W.view) -- Focus the main screen again.
 
