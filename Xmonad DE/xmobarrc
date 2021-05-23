@@ -1,16 +1,16 @@
 Config { 
 
    -- appearance
-     font =         "xft:JetBrains Mono:style=Bold:size=11:antialias=true"
-   , additionalFonts = [ "xft:mononoki Nerd Font Mono:pixelsize=19:antialias=true:hinting=true" ]
-   , bgColor =      "#1D2021"
-   , fgColor =      "#EBDBB2"
+     font =         "xft:JetBrains Mono:style=Bold:size=5.7:antialias=true"
+   , additionalFonts = [ "xft:mononoki Nerd Font Mono:pixelsize=19.5:antialias=true:hinting=true" ]
+   , bgColor =      "#2e3440"
+   , fgColor =      "#97a1b4"
    , position =     Top
 
    -- layout
    , sepChar =  "%"   -- delineator between plugin names and straight text
    , alignSep = "}{"  -- separator between left-right alignment
-   , template = " <fn=1></fn> <fc=#32302f>|</fc> %UnsafeStdinReader% }{ <fc=#83a598>| <fn=1></fn> %uname%</fc> <fc=#8ec07c>| %multicpu%</fc> <fc=#fabd2f>| %multicoretemp%</fc> <fc=#fe8019>| %memory%</fc> <fc=#fb4934>| <fn=1></fn> %pacman-updates% %aur-updates%</fc> <fc=#b8bb26>| %dynnetwork%</fc> <fc=#d3869b>| %time%</fc> | %kbd% "
+   , template = " %UnsafeStdinReader% }{ <fc=#8ec07c>| <fn=1></fn> %uname%</fc> <fc=#b8bb26>| %multicpu% (%multicoretemp%)</fc> <fc=#fabd2f>| %memory%</fc> <fc=#fe8019>| %dynnetwork%</fc> <fc=#fb4934>| <fn=1></fn> 0 0</fc> <fc=#d3869b>| %time%</fc> | %kbd% "
 
    -- general behavior
    , lowerOnStart =     True    -- send to bottom of window stack on start
@@ -24,38 +24,24 @@ Config {
    , commands = 
 
         -- network activity monitor (dynamic interface resolution)
-        [ Run DynNetwork     [ "--template" , "<fn=1>\xf0aa</fn> <tx>kB <fn=1>\xf0ab</fn> <rx>kB"
+        [ Run DynNetwork     [ "--template" , "<fn=1>\xf0ab</fn> <rx>kB <fn=1>\xf0aa</fn> <tx>kB"
                              ] 10
                     
         -- cpu
-        , Run MultiCpu       [ "--template" , "<fn=1>\xf108</fn> cpu: (<total>%)"
-                             , "--Low"      , "10"         -- units: %
-                             , "--High"     , "60"         -- units: %
-                             , "--low"      , "#729963"
-                             , "--high"     , "#A2CC93"
-                             ] 50
+        , Run MultiCpu       [ "--template" , "<fn=1>\xf108</fn> cpu: <total>%"] 50
 
-        -- cpu core temperature monitor
-        , Run MultiCoreTemp  [ "--template" , "<fn=1>\xf8c7</fn> temp: (<avg>°)"
-                             , "--Low"      , "30"
-                             , "--High"     , "70"
-                             , "--low"      , "#C89726"
-                             , "--high"     , "#FBCA58"
+        -- cpu core temperature monitor <fn=1>\xf8c7</fn>
+        , Run MultiCoreTemp  [ "--template" , "<avg>°C"
                              , "--"
                                    , "--mintemp", "25"
                                    , "--maxtemp", "100"
                              ] 50
                           
         -- memory usage monitor
-        , Run Memory         [ "--template" , "<fn=1>\xf233</fn> mem: (<usedratio>%)"
-                             , "--Low"      , "10"         -- units: %
-                             , "--High"     , "50"         -- units: %
-                             , "--low"      , "#CC6714"
-                             , "--high"     , "#FF9A47"
-                             ] 50
+        , Run Memory         [ "--template" , "<fn=1>\xf233</fn> mem: <usedratio>%"] 50
 
         -- time and date indicator 
-        , Run DateZone       "<fn=1>\xf133</fn> %a, %d %b (%I:%M)" "es_CO.UTF-8" "America/Bogota" "time" 10
+        , Run DateZone       "<fn=1>\xf133</fn> %a, %d %b (%I:%M %p)" "es_CO.UTF-8" "America/Bogota" "time" 10
 
         -- keyboard layout indicator
         , Run Kbd            [ ("us(dvorak)" , "<fc=#00008B>DV</fc>")
@@ -64,8 +50,8 @@ Config {
                              ]
         
 	      -- Custom Scripts
-	      , Run Com "/home/santiago/.scripts/pacman-updates.sh" [] "pacman-updates" 36000
-	      , Run Com "/home/santiago/.scripts/taur.sh" ["-Nu"] "aur-updates" 36000
+	      -- , Run Com "/home/santiago/.scripts/pacman-updates.sh" [] "pacman-updates" 36000
+	      -- , Run Com "/home/santiago/.scripts/taur.sh" ["-Nu"] "aur-updates" 36000
 	      , Run Com "uname" ["-r"] "" 0
 
         -- Unsafe Stdin Reader

@@ -74,19 +74,22 @@ myModMask :: KeyMask
 myModMask = mod4Mask        -- Sets modkey to super/windows key
 
 myTerminal :: String
-myTerminal = "urxvt"    -- Sets default terminal
+myTerminal = "alacritty"    -- Sets default terminal
 
 myBrowser :: String
-myBrowser = "firefox "  -- Sets qutebrowser as browser
+myBrowser = "firefox "  -- Sets firefox as browser
+
+myFileManager :: String
+myFileManager = "nemo"  -- Sets nemo as file manager
 
 myBorderWidth :: Dimension
 myBorderWidth = 2           -- Sets border width for windows
 
 myNormalBorderColor :: String
-myNormalBorderColor = "#a89984"
+myNormalBorderColor = "#4c566a"
 
 myFocusedBorderColor :: String
-myFocusedBorderColor = "#FE8019"
+myFocusedBorderColor = "#3b4252"
 
 windowCount :: X (Maybe String)
 windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace . W.current . windowset
@@ -256,7 +259,7 @@ myKeys =
     , ((myModMask, xK_c), spawn "code")
 
     -- Launch nemo
-    , ((myModMask, xK_f), spawn "nemo")
+    , ((myModMask, xK_f), spawn myFileManager)
 
     -- Close focused window
     , ((myModMask .|. shiftMask, xK_q), kill)
@@ -280,8 +283,8 @@ myKeys =
 main :: IO ()
 main = do
     xmproc <- spawnPipe "xmobar -x 0 $HOME/.config/xmobar/xmobarrc"
-    xmproctv <- spawnPipe "xmobar -x 1 $HOME/.config/xmobar/xmobarrc-tv"
-    xmprocportrait <- spawnPipe "xmobar -x 2 $HOME/.config/xmobar/xmobarrc-portrait"
+    -- xmproctv <- spawnPipe "xmobar -x 1 $HOME/.config/xmobar/xmobarrc-tv"
+    -- xmprocportrait <- spawnPipe "xmobar -x 2 $HOME/.config/xmobar/xmobarrc-portrait"
 
     -- the xmonad, ya know...what the WM is named after!
     xmonad $ ewmh def
@@ -301,14 +304,15 @@ main = do
         , normalBorderColor  = myNormalBorderColor
         , focusedBorderColor = myFocusedBorderColor
         , logHook = workspaceHistoryHook <+> dynamicLogWithPP xmobarPP
-            { ppOutput = \x -> hPutStrLn xmproc x >> hPutStrLn xmproctv x >> hPutStrLn xmprocportrait x
-            , ppCurrent = xmobarColor "#98971a" "" . wrap "[" "]" -- current workspace
-            , ppVisible = xmobarColor "#b8bb26" ""                -- visible but not current workspace
-            , ppHidden = xmobarColor "#bdae93" ""                 -- hidden workspaces
-            , ppHiddenNoWindows = xmobarColor "#504945" ""        -- hidden workspaces (no windows)
-            , ppTitle = xmobarColor "#b3afc2" "" . shorten 10     -- title of active window
-            , ppSep = "<fc=#32302f> <fn=1>|</fn> </fc>"           -- separators
+            { ppOutput = \x -> hPutStrLn xmproc x -- >> hPutStrLn xmproctv x >> hPutStrLn xmprocportrait x
+            , ppCurrent = xmobarColor "#8fbcbb" "" . wrap "(" ")" -- current workspace cdd7e5
+            , ppVisible = xmobarColor "#8fbcbb" ""                -- visible but not current workspace
+            , ppVisibleNoWindows = Just(xmobarColor "#81a1c1" "") -- visible but not current workspace (no windows)
+            , ppHidden = xmobarColor "#88c0d0" ""                 -- hidden workspaces
+            , ppHiddenNoWindows = xmobarColor "#5e81ac" ""        -- hidden workspaces (no windows)
+            , ppTitle = xmobarColor "#eceff4" "" . shorten 55     -- title of active window
+            , ppSep = "<fc=#4c566a> <fn=1>|</fn> </fc>"           -- separators
             , ppUrgent = xmobarColor "#c45500" "" . wrap "!" "!"  -- urgent workspace
-            , ppOrder = \(ws:l:t:ex) -> ws : ex -- extra [ws,l]++ex++[t]
+            , ppOrder = \(ws:l:t:ex) -> [l,ws]++ex++[t]           -- ws : ex -- extra [ws,l]++ex++[t]
             }
         } `additionalKeys` myKeys
