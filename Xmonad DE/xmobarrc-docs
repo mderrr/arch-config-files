@@ -1,0 +1,54 @@
+Config { 
+
+   -- appearance
+     font            = "xft:JetBrains Mono:style=Bold:size=5.7:antialias=true"
+   , additionalFonts = [ "xft:mononoki Nerd Font Mono:pixelsize=19.5:antialias=true:hinting=true" ]
+   , bgColor         = "#2e3440"
+   , fgColor         = "#97a1b4"
+   , position        = Top
+
+   -- layout
+   , sepChar  = "%"   -- delineator between plugin names and straight text
+   , alignSep = "}{"  -- separator between left-right alignment
+   , template = " %UnsafeStdinReader% }{ <fc=#8ec07c>| %SKMD%</fc> <fc=#b8bb26>| %top% </fc>"
+
+   -- general behavior
+   , lowerOnStart     = True    -- send to bottom of window stack on start
+   , hideOnStart      = False   -- start with window unmapped (hidden)
+   , allDesktops      = False    -- show on all desktops
+   , overrideRedirect = True    -- set the Override Redirect flag (Xlib)
+   , pickBroadest     = False   -- choose widest display (multi-monitor)
+   , persistent       = True    -- enable/disable hiding (True = disabled)
+
+   -- plugins
+   , commands = 
+
+        -- Weather
+        [ Run WeatherX "SKMD"
+                    [ ("clear",                   "<fn=1>\xe30d</fn>")
+                    , ("sunny",                   "<fn=1>\xe30c</fn>")
+                    , ("mostly clear",            "<fn=1>\xe30c</fn>")
+                    , ("mostly sunny",            "<fn=1>\xe30c</fn>")
+                    , ("partly sunny",            "<fn=1>\xe30c</fn>")
+                    , ("fair",                    "<fn=1>\xe32b</fn>")
+                    , ("cloudy",                  "<fn=1>\xe312</fn>")
+                    , ("overcast",                "<fn=1>\xe312</fn>")
+                    , ("partly cloudy",           "<fn=1>\xfa94</fn>")
+                    , ("mostly cloudy",           "<fn=1>\xe312</fn>")
+                    , ("considerable cloudiness", "<fn=1>\xe312</fn>")
+                    ]
+
+                    [ "-t", "<skyConditionS> <tempC>°C <fn=1>\xe373</fn> <rh>% <fn=1>\xfa9c</fn> <windKmh>Km/h"
+                    ] 36000
+
+        , Run TopProc [ "--template", "<fn=1>\xf6a6</fn> <name1> (<cpu1>%)" 
+                      ] 10
+
+         
+
+	      -- Custom Scripts
+
+        -- Unsafe Stdin Reader
+        , Run UnsafeStdinReader
+	      ]
+   }

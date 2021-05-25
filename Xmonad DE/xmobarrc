@@ -10,7 +10,7 @@ Config {
    -- layout
    , sepChar =  "%"   -- delineator between plugin names and straight text
    , alignSep = "}{"  -- separator between left-right alignment
-   , template = " %UnsafeStdinReader% }{ <fc=#8ec07c>| <fn=1></fn> %uname%</fc> <fc=#b8bb26>| %multicpu% (%multicoretemp%)</fc> <fc=#fabd2f>| %memory%</fc> <fc=#fe8019>| %dynnetwork%</fc> <fc=#fb4934>| <fn=1></fn> 0 0</fc> <fc=#d3869b>| %time%</fc> | %kbd% "
+   , template = " %UnsafeStdinReader% }{ <fc=#ebdbb2>| %alsa:default:Master%</fc> <fc=#8fbcbb>| <fn=1></fn> %uname%</fc> <fc=#8ec07c>| %multicpu% (%multicoretemp%)</fc> <fc=#b8bb26>| %memory%</fc> <fc=#fabd2f>| %disku%</fc> <fc=#fe8019>| %dynnetwork%</fc> <fc=#fb4934>| <fn=1></fn> 0 0</fc> <fc=#d3869b>| %time%</fc> | %kbd% "
 
    -- general behavior
    , lowerOnStart =     True    -- send to bottom of window stack on start
@@ -23,12 +23,16 @@ Config {
    -- plugins
    , commands = 
 
+        -- Volueme
+        [ Run Alsa "default" "Master" [ "--template", "<fn=1>\xfa7d</fn> <volume>%"]
+
         -- network activity monitor (dynamic interface resolution)
-        [ Run DynNetwork     [ "--template" , "<fn=1>\xf0ab</fn> <rx>kB <fn=1>\xf0aa</fn> <tx>kB"
-                             ] 10
+        , Run DynNetwork     [ "--template" , "<fn=1>\xf0ab</fn> <rx> <fn=1>\xf0aa</fn> <tx>"
+                             , "-S", "true"
+                             ] 20
                     
         -- cpu
-        , Run MultiCpu       [ "--template" , "<fn=1>\xf108</fn> cpu: <total>%"] 50
+        , Run MultiCpu       [ "--template" , "<fn=1>\xf85a</fn> <total>%" ] 20
 
         -- cpu core temperature monitor <fn=1>\xf8c7</fn>
         , Run MultiCoreTemp  [ "--template" , "<avg>°C"
@@ -38,7 +42,10 @@ Config {
                              ] 50
                           
         -- memory usage monitor
-        , Run Memory         [ "--template" , "<fn=1>\xf233</fn> mem: <usedratio>%"] 50
+        , Run Memory         [ "--template" , "<fn=1>\xfb18</fn> <usedratio>%" ] 20
+
+        -- Disk Usage
+        , Run DiskU [ ("/", "<fn=1>\xf7c9</fn> <usedp>%") ] [] 600
 
         -- time and date indicator 
         , Run DateZone       "<fn=1>\xf133</fn> %a, %d %b (%I:%M %p)" "es_CO.UTF-8" "America/Bogota" "time" 10
@@ -46,7 +53,7 @@ Config {
         -- keyboard layout indicator
         , Run Kbd            [ ("us(dvorak)" , "<fc=#00008B>DV</fc>")
                              , ("us"         , "<fc=#8B0000>US</fc>")
-                             , ("latam"      , "<fn=1>\xf80b</fn> latam")
+                             , ("latam"      , "<fn=1>\xf812</fn> latam")
                              ]
         
 	      -- Custom Scripts

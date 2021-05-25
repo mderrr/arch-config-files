@@ -237,9 +237,11 @@ myManageHook = composeAll
      , className =? "toolbar"         --> doFloat
      , className =? "Pavucontrol"     --> doFloat
      , className =? "nemo"            --> doFloat
+     , className =? "Matplotlib"      --> doFloat
      , title =? "Visual Studio Code"  --> doShift ( myWorkspaces !! 1 )
      , title =? "Mozilla Firefox"     --> doShift ( myWorkspaces !! 2 )
      , className =? "Gimp"            --> doShift ( myWorkspaces !! 3 )
+     , (className =? "zoom" <&&> resource =? "zoom") --> doFloat  -- Float Firefox Dialog
      , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat  -- Float Firefox Dialog
      , isFullscreen -->  doFullFloat
      ] 
@@ -284,7 +286,7 @@ main :: IO ()
 main = do
     xmproc <- spawnPipe "xmobar -x 0 $HOME/.config/xmobar/xmobarrc"
     -- xmproctv <- spawnPipe "xmobar -x 1 $HOME/.config/xmobar/xmobarrc-tv"
-    -- xmprocportrait <- spawnPipe "xmobar -x 2 $HOME/.config/xmobar/xmobarrc-portrait"
+    xmprocdocs <- spawnPipe "xmobar -x 1 $HOME/.config/xmobar/xmobarrc-docs"
 
     -- the xmonad, ya know...what the WM is named after!
     xmonad $ ewmh def
@@ -304,7 +306,7 @@ main = do
         , normalBorderColor  = myNormalBorderColor
         , focusedBorderColor = myFocusedBorderColor
         , logHook = workspaceHistoryHook <+> dynamicLogWithPP xmobarPP
-            { ppOutput = \x -> hPutStrLn xmproc x -- >> hPutStrLn xmproctv x >> hPutStrLn xmprocportrait x
+            { ppOutput = \x -> hPutStrLn xmproc x >> hPutStrLn xmprocdocs x -- >> hPutStrLn xmprocportrait x
             , ppCurrent = xmobarColor "#8fbcbb" "" . wrap "(" ")" -- current workspace cdd7e5
             , ppVisible = xmobarColor "#8fbcbb" ""                -- visible but not current workspace
             , ppVisibleNoWindows = Just(xmobarColor "#81a1c1" "") -- visible but not current workspace (no windows)
