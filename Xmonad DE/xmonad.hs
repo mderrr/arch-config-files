@@ -217,7 +217,7 @@ myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ T.toggleLayouts float
                                  ||| tallAccordion
                                  ||| wideAccordion
 
-myWorkspaces = ["main", "dev", "www", "gfx", "5", "6", "7", "8", "docs", "tv"]
+myWorkspaces = ["main", "dev", "www", "gfx", "5", "6", "7", "docs", "tv"]
 
 myManageHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
 myManageHook = composeAll

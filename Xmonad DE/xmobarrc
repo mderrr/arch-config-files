@@ -10,7 +10,7 @@ Config {
    -- layout
    , sepChar =  "%"   -- delineator between plugin names and straight text
    , alignSep = "}{"  -- separator between left-right alignment
-   , template = " %UnsafeStdinReader% }{ <fc=#ebdbb2>| %alsa:default:Master%</fc> <fc=#8fbcbb>| <fn=1></fn> %uname%</fc> <fc=#8ec07c>| %multicpu% (%multicoretemp%)</fc> <fc=#b8bb26>| %memory%</fc> <fc=#fabd2f>| %disku%</fc> <fc=#fe8019>| %dynnetwork%</fc> <fc=#fb4934>| <fn=1></fn> 0 0</fc> <fc=#d3869b>| %time%</fc> | %kbd% "
+   , template = " %UnsafeStdinReader% }{ <fc=#ebdbb2>| %alsa:default:Master%</fc> <fc=#8fbcbb>| <fn=1></fn> %uname%</fc> <fc=#8ec07c>| %multicpu% (%multicoretemp%)</fc> <fc=#b8bb26>| %memory%</fc> <fc=#fabd2f>| %disku%</fc> <fc=#fe8019>| %dynnetwork%</fc> <fc=#fb4934>| <fn=1></fn> %pacman-updates% %aur-updates%</fc> <fc=#d3869b>| %time%</fc> | %kbd% "
 
    -- general behavior
    , lowerOnStart =     True    -- send to bottom of window stack on start
@@ -57,8 +57,8 @@ Config {
                              ]
         
 	      -- Custom Scripts
-	      -- , Run Com "/home/santiago/.scripts/pacman-updates.sh" [] "pacman-updates" 36000
-	      -- , Run Com "/home/santiago/.scripts/taur.sh" ["-Nu"] "aur-updates" 36000
+	      , Run Com "/home/santiago/.scripts/pacman-updates.sh" [] "pacman-updates" 18000
+	      , Run Com "/home/santiago/.scripts/taur.sh" ["-Synu"] "aur-updates" 18000
 	      , Run Com "uname" ["-r"] "" 0
 
         -- Unsafe Stdin Reader
